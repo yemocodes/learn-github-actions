@@ -1,0 +1,39 @@
+name: Lint Test Deploy Workflow
+on:
+    push: 
+        branches:
+            - main
+jobs: 
+    lintandtest:
+        name: Lint
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Setup node
+              uses: actions/setup-node@v4
+              with: 
+                node-version: "20.x"
+            - name: Install Deps
+              run: npm ci
+            - name: Lint
+              run: npm run lint
+            - name: Run Test
+              run: npm test
+    buildanddeploy:
+        name: Test and Deploy
+        runs-on: ubuntu-latest
+        needs:  [lintandtest]
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Setup node
+              uses: actions/setup-node@v4
+              with: 
+                node-version: "20.x"
+            - name: Install Deps
+              run: npm ci
+            - name: Build
+              run: npm build
+            - name: Deploy
+              run: echo "Deploying..."
